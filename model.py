@@ -1,12 +1,12 @@
 from read_data import read_dataset
 
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Conv2D
 from tensorflow.keras.layers import MaxPool2D, Flatten, Dense
 from tensorflow.keras import Model
 from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.image import resize
 
 
 PATH = "../dataset/train1427_processed.tfrecord"
@@ -79,7 +79,7 @@ labeled_data_sets = labeled_dataset(parsed_dataset)
 x = []
 y = []
 for data in labeled_data_sets:
-  resized_image = resize(data[0], (224, 224)).numpy() / 255.0
+  resized_image = tf.image.resize(data[0], (224, 224)).numpy() / 255.0
   x.append(resized_image)
   y.append(data[1])
 x = tf.convert_to_tensor(x)
