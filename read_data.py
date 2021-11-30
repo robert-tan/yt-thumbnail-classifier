@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
-@tf.function
 def read_dataset(file_path):
     dataset = tf.data.TFRecordDataset(file_path)
 
