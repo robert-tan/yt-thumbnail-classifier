@@ -1,4 +1,4 @@
-from read_data import read_dataset
+# from read_data import read_dataset
 import boto3
 
 import numpy as np
@@ -18,6 +18,22 @@ from tensorflow.keras.losses import categorical_crossentropy
 # print(body)
 
 PATH = "../data/train1427_processed.tfrecord"
+
+def read_dataset(file_path):
+    dataset = tf.data.TFRecordDataset(file_path)
+
+    def read_tfrecord(serialized_example):
+        feature_description = {
+            'thumbnail': tf.io.VarLenFeature(tf.string),
+            'n_W': tf.io.FixedLenFeature((), tf.int64),
+            'n_H': tf.io.FixedLenFeature((), tf.int64),
+            'n_C': tf.io.FixedLenFeature((), tf.int64),
+            'labels': tf.io.VarLenFeature(tf.int64),
+        }
+        example = tf.io.parse_single_example(serialized_example, feature_description)
+        return example
+
+    return dataset.map(read_tfrecord)
 
 
 def labeled_dataset(parsed_dataset):
