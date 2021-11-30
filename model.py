@@ -113,4 +113,4 @@ train_x, train_y = x[:800], y[:800]
 val_x, val_y = x[800:], y[800:]
 
 model = model()
-model.fit(train_x, train_y, validation_data=(val_x, val_y), epochs=100, verbose=1, batch_size=32)
+model.fit(train_x, train_y, validation_data=(val_x, val_y), epochs=100, verbose=1)
