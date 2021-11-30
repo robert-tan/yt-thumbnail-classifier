@@ -16,6 +16,7 @@ from tensorflow.keras.losses import categorical_crossentropy
 # obj = s3.Object(bucketname, filename)
 # body = obj.get()['Body'].read()
 # print(body)
+tf.enable_eager_execution()
 
 PATH = "../data/train1427_processed.tfrecord"
 
