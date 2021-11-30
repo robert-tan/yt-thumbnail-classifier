@@ -18,7 +18,7 @@ from tensorflow.keras.losses import categorical_crossentropy
 # print(body)
 tf.enable_eager_execution()
 
-PATH = "s3://cs230-project/train0002_processed.tfrecord"
+PATH = "../data/train0002_processed.tfrecord"
 
 def read_dataset(file_path):
     dataset = tf.data.TFRecordDataset(file_path)
