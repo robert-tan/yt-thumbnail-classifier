@@ -95,7 +95,7 @@ def model():
     # creating the model
     opt = Adam(learning_rate=0.0001)
     model = Model(inputs=input, outputs=output)
-    model.compile(optimizer=opt, loss=categorical_crossentropy, metrics=['accuracy'])
+    model.compile(optimizer=opt, loss=tf.keras.losses.sparse_categorical_crossentropy, metrics=['accuracy'])
     return model
 
 
@@ -109,7 +109,6 @@ for data in labeled_data_sets:
   y.append(data[1])
 x = tf.convert_to_tensor(x)
 y = tf.convert_to_tensor(y)
-y = tf.one_hot(y, 25)
 train_x, train_y = x[:800], y[:800]
 val_x, val_y = x[800:], y[800:]
 
