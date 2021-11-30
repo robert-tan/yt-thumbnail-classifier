@@ -9,7 +9,7 @@ from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.losses import categorical_crossentropy
 
 
-PATH = "../dataset/train1427_processed.tfrecord"
+PATH = "s3://cs230-project/train1427_processed.tfrecord"
 
 
 def labeled_dataset(parsed_dataset):
