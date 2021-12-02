@@ -149,10 +149,10 @@ plt.savefig('xception_acc.png')
 from keras.models import load_model
 saved_model = load_model("xception.h5")
 test_x = []
-test_y = []
+original_y = []
 parsed_dataset = read_dataset('/content/train0133_processed.tfrecord') # ACTION NEEDED: .tfrecord file_path needs to be specified
 labeled_data_sets = labeled_dataset(parsed_dataset)
-for data in labeled_data_sets:
+for data in labeled_data_sets[:800]:
   if data[1] == 12:
     val = 0
   elif data[1] == 11:
@@ -163,10 +163,104 @@ for data in labeled_data_sets:
     val = 3
   resized_image = cv2.resize(data[0], (224, 224)) / 255.0
   test_x.append(resized_image)
-  test_y.append(val)
-test_y = np.array(test_y).T
+  original_y.append(val)
+test_y = np.array(original_y).T
 test_x = np.array(test_x)
 test_y = to_categorical(test_y)
 loss, acc = saved_model.evaluate(test_x, test_y)
 print(loss)
 print(acc)
+
+predict_y = saved_model.predict(test_x)
+predict_y = np.argmax(predict_y, axis=1)
+original_y = np.array(original_y)
+
+from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+precision = precision_score(original_y, predict_y, average='macro')
+recall = recall_score(original_y, predict_y, average='macro')
+f1 = f1_score(original_y, predict_y, average='macro')
+cm = confusion_matrix(original_y, predict_y)
+print(f'Precision score is: {precision}')
+print(f'Recall score is: {recall}')
+print(f'F1 score is: {f1}')
+print(cm)
+
+def plot_confusion_matrix(cm,
+                          target_names,
+                          title='Confusion matrix',
+                          cmap=None,
+                          normalize=True):
+    """
+    given a sklearn confusion matrix (cm), make a nice plot
+
+    Arguments
+    ---------
+    cm:           confusion matrix from sklearn.metrics.confusion_matrix
+
+    target_names: given classification classes such as [0, 1, 2]
+                  the class names, for example: ['high', 'medium', 'low']
+
+    title:        the text to display at the top of the matrix
+
+    cmap:         the gradient of the values displayed from matplotlib.pyplot.cm
+                  see http://matplotlib.org/examples/color/colormaps_reference.html
+                  plt.get_cmap('jet') or plt.cm.Blues
+
+    normalize:    If False, plot the raw numbers
+                  If True, plot the proportions
+
+    Usage
+    -----
+    plot_confusion_matrix(cm           = cm,                  # confusion matrix created by
+                                                              # sklearn.metrics.confusion_matrix
+                          normalize    = True,                # show proportions
+                          target_names = y_labels_vals,       # list of names of the classes
+                          title        = best_estimator_name) # title of graph
+
+    Citiation
+    ---------
+    http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
+
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import itertools
+
+    accuracy = np.trace(cm) / float(np.sum(cm))
+    misclass = 1 - accuracy
+
+    if cmap is None:
+        cmap = plt.get_cmap('Blues')
+
+    plt.figure(figsize=(8, 6))
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+
+    if target_names is not None:
+        tick_marks = np.arange(len(target_names))
+        plt.xticks(tick_marks, target_names, rotation=45)
+        plt.yticks(tick_marks, target_names)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+
+    thresh = cm.max() / 1.5 if normalize else cm.max() / 2
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        if normalize:
+            plt.text(j, i, "{:0.4f}".format(cm[i, j]),
+                     horizontalalignment="center",
+                     color="white" if cm[i, j] > thresh else "black")
+        else:
+            plt.text(j, i, "{:,}".format(cm[i, j]),
+                     horizontalalignment="center",
+                     color="white" if cm[i, j] > thresh else "black")
+
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label\naccuracy={:0.4f}; misclass={:0.4f}'.format(accuracy, misclass))
+    plt.show()
+
+plot_confusion_matrix(cm, ['Arts', 'Games', 'Vehicles', 'Other'], title='Xception Confusion Matrix')
