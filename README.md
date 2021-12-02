@@ -7,4 +7,7 @@ YouTube videos are often classified and tagged with certain video categories in 
 We are using a subset of the YT-8M dataset with per-video features. We have processed the dataset to store thumbnail images as a `(n_w, n_h, 3)`-dimensional array and labeled each thumbnail with one of 25 video categories. The total size of the (processed) dataset is 150GB with around 300,000 examples.
 
 ## Model
-// TODO
+VGG16
+Inception
+ResNet50
+Xception
