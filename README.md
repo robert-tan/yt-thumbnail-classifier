@@ -8,6 +8,9 @@ We are using a subset of the YT-8M dataset with per-video features. We have proc
 
 ## Model
 VGG16
+
 Inception
+
 ResNet50
+
 Xception
